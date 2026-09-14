@@ -1,0 +1,1941 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Nando’s Head Office — Leeds Area Supply Desk</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --chip:#f3f4f6;
+
+      --ok-bg:#ecfdf5;   --ok-fg:#065f46;   --ok-br:#a7f3d0;
+      --watch-bg:#fffbeb;--watch-fg:#92400e;--watch-br:#fde68a;
+      --act-bg:#fef2f2;  --act-fg:#991b1b;  --act-br:#fecaca;
+
+      --shadow: 0 10px 30px rgba(17,24,39,.08);
+      --shadow2: 0 6px 18px rgba(17,24,39,.08);
+
+      --radius: 16px;
+      --radius2: 12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(220, 38, 38, .10), transparent 60%),
+        radial-gradient(900px 500px at 85% 0%, rgba(16, 185, 129, .10), transparent 60%),
+        linear-gradient(180deg, #f8fafc, var(--bg));
+    }
+
+    /* App layout */
+    .app{ min-height:100%; display:flex; flex-direction:column; }
+
+    header.topbar{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(248, 250, 252, .75);
+      border-bottom:1px solid rgba(229,231,235,.8);
+    }
+
+    .topbar-inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{ display:flex; align-items:center; gap:12px; min-width: 240px; }
+    .logo{
+      width:38px; height:38px;
+      border-radius: 12px;
+      display:grid; place-items:center;
+      background: #111827;
+      color:#fff;
+      font-weight:700;
+      box-shadow: var(--shadow2);
+      user-select:none;
+    }
+    .brand h1{ font-size:14px; margin:0; letter-spacing:.2px; font-weight:700; }
+    .brand .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+
+    .top-actions{
+      display:flex; align-items:center; gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .meta{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; }
+
+    .iconbtn{
+      width:36px; height:36px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: var(--card);
+      box-shadow: 0 2px 10px rgba(17,24,39,.04);
+      display:grid; place-items:center;
+      cursor:pointer;
+    }
+    .iconbtn:active{transform: translateY(1px)}
+    .iconbtn svg{width:18px; height:18px; fill:#111827}
+
+    .pill{
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.75);
+      color:#111827;
+      font-size:12px;
+      display:flex; align-items:center; gap:8px;
+      user-select:none;
+    }
+    .pill .dot{ width:8px; height:8px; border-radius:999px; background:#111827; opacity:.6; }
+
+    /* KPI strip */
+    .kpis{
+      max-width:1200px;
+      margin:0 auto;
+      padding:10px 16px 16px;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:12px;
+    }
+    @media (max-width: 980px){ .kpis{grid-template-columns: repeat(2, 1fr)} }
+    .kpi{
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(229,231,235,.9);
+      border-radius: var(--radius);
+      padding:12px 14px;
+      box-shadow: 0 4px 16px rgba(17,24,39,.05);
+    }
+    .kpi .label{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .kpi .value{ font-size:18px; font-weight:800; margin-top:6px; letter-spacing:.2px; }
+    .kpi .sub{ font-size:12px; color:var(--muted); margin-top:6px; }
+    .kpi.alert{ border-color: var(--act-br); background: rgba(254,242,242,.80); }
+
+    /* Main content */
+    main{
+      flex:1;
+      max-width:1200px;
+      margin:0 auto;
+      padding: 0 16px 18px;
+      width:100%;
+    }
+
+    .shell{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .shell{grid-template-columns: 1fr} }
+
+    .panel{
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(229,231,235,.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel-h{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(229,231,235,.75);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panel-h h2{ margin:0; font-size:13px; letter-spacing:.2px; font-weight:800; }
+    .panel-h .hint{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+    /* Sites list */
+    .sites{ display:flex; flex-direction:column; gap:10px; padding:12px; }
+
+    .site{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      padding:12px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      box-shadow: 0 2px 12px rgba(17,24,39,.05);
+      transition: transform .08s ease, border-color .08s ease;
+    }
+    .site:hover{transform: translateY(-1px)}
+    .site.active{
+      border-color: rgba(17,24,39,.20);
+      outline: 2px solid rgba(17,24,39,.08);
+      outline-offset: 1px;
+    }
+    .site .row1{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .site .name{ font-size:13px; font-weight:800; }
+    .site .row2{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .chip{
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid var(--line);
+      background: var(--chip);
+      white-space:nowrap;
+    }
+    .chip.ok{background:var(--ok-bg); color:var(--ok-fg); border-color:var(--ok-br)}
+    .chip.watch{background:var(--watch-bg); color:var(--watch-fg); border-color:var(--watch-br)}
+    .chip.action{background:var(--act-bg); color:var(--act-fg); border-color:var(--act-br)}
+
+    /* Restaurant detail header */
+    .detail{ padding: 14px; }
+    .detail-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 10px;
+    }
+    .detail-title{ margin:0; font-size:16px; font-weight:900; letter-spacing:.2px; }
+    .detail-sub{ margin-top:4px; color:var(--muted); font-size:12px; }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin: 8px 0 12px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      border-radius: 999px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      color:#111827;
+    }
+    .tab.active{
+      border-color: rgba(17,24,39,.20);
+      box-shadow: 0 2px 10px rgba(17,24,39,.06);
+    }
+
+    /* Table */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid rgba(229,231,235,.9);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.9);
+    }
+    th, td{
+      padding:10px 10px;
+      font-size:12px;
+      border-bottom:1px solid rgba(229,231,235,.75);
+      text-align:left;
+      vertical-align:middle;
+    }
+    th{
+      background: rgba(243,244,246,.65);
+      font-weight:900;
+      color:#111827;
+      letter-spacing:.2px;
+    }
+    tr:last-child td{border-bottom:none}
+    .num{font-variant-numeric: tabular-nums; font-feature-settings:"tnum" 1; }
+
+    .status{ display:inline-flex; align-items:center; gap:8px; }
+    .status .bar{ width:8px; height:8px; border-radius:999px; background:#9ca3af; }
+    .status.ok .bar{background:#10b981}
+    .status.watch .bar{background:#f59e0b}
+    .status.action .bar{background:#ef4444}
+
+    .btn{
+      border:1px solid rgba(17,24,39,.18);
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      padding:7px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.ghost{
+      background: rgba(255,255,255,.9);
+      color:#111827;
+      border-color: var(--line);
+      font-weight:800;
+    }
+    .btn[disabled]{opacity:.45; cursor:not-allowed}
+
+    /* Operations feed */
+    .feed{
+      margin-top:12px;
+      border:1px solid rgba(229,231,235,.9);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.9);
+      overflow:hidden;
+    }
+    .feed-h{
+      padding:10px 10px;
+      background: rgba(243,244,246,.65);
+      border-bottom:1px solid rgba(229,231,235,.75);
+      font-size:12px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .feed-list{
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height: 180px;
+      overflow:auto;
+    }
+    .feed-item{
+      font-size:12px;
+      color:#111827;
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+    .feed-item .t{
+      color:var(--muted);
+      min-width: 52px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Drawer backdrops */
+    .drawer-backdrop{
+      position:fixed; inset:0;
+      background: rgba(17,24,39,.35);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .15s ease;
+      z-index:40;
+    }
+    .drawer-backdrop.open{ opacity:1; pointer-events:auto; }
+
+    /* Drawer */
+    .drawer{
+      position:fixed;
+      top:0; right:0;
+      height:100%;
+      width:min(440px, 92vw);
+      background: rgba(255,255,255,.95);
+      border-left:1px solid rgba(229,231,235,.9);
+      box-shadow: -10px 0 30px rgba(17,24,39,.12);
+      transform: translateX(102%);
+      transition: transform .18s ease;
+      z-index:45;
+      display:flex;
+      flex-direction:column;
+      backdrop-filter: blur(10px);
+    }
+    .drawer.open{transform: translateX(0)}
+    .drawer-h{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(229,231,235,.75);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .drawer-h h3{ margin:0; font-size:13px; font-weight:900; letter-spacing:.2px; }
+    .drawer-h .sub{ margin-top:4px; color:var(--muted); font-size:12px; line-height:1.3; }
+    .drawer-body{ padding:14px; overflow:auto; flex:1; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .kv .box{
+      border:1px solid rgba(229,231,235,.9);
+      background: rgba(248,250,252,.9);
+      border-radius: 12px;
+      padding:10px;
+    }
+    .kv .k{font-size:11px; color:var(--muted); font-weight:800; letter-spacing:.2px}
+    .kv .v{margin-top:6px; font-size:14px; font-weight:900}
+
+    .opt{
+      border:1px solid rgba(229,231,235,.9);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.95);
+      padding:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      box-shadow: 0 2px 12px rgba(17,24,39,.05);
+      cursor:pointer;
+      margin-bottom:10px;
+    }
+    .opt:hover{outline: 2px solid rgba(17,24,39,.06); outline-offset: 2px}
+    .opt .l{ display:flex; flex-direction:column; gap:6px; }
+    .opt .title{font-size:13px; font-weight:900}
+    .opt .meta{font-size:12px; color:var(--muted)}
+    .opt .r{
+      text-align:right;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:flex-end;
+    }
+    .opt .price{font-size:14px; font-weight:900}
+    .opt .tag{
+      font-size:11px;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(243,244,246,.75);
+    }
+
+    .drawer-f{
+      padding:12px 14px 14px;
+      border-top:1px solid rgba(229,231,235,.75);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(248,250,252,.8);
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom:18px;
+      background: rgba(17,24,39,.92);
+      color:#fff;
+      padding:10px 12px;
+      border-radius: 14px;
+      font-size:12px;
+      box-shadow: 0 10px 30px rgba(17,24,39,.18);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .15s ease, transform .15s ease;
+      z-index:70;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      max-width:min(720px, 92vw);
+    }
+    .toast.show{
+      opacity:1;
+      pointer-events:auto;
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .toast .small{color: rgba(255,255,255,.78)}
+    .mono{font-variant-numeric: tabular-nums; font-feature-settings:"tnum" 1}
+    .muted{color:var(--muted)}
+    .right{ text-align:right; }
+
+    /* Delivery plan */
+    .plan-summary{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    /* Invoices */
+    .inv-summary{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .linkbtn{
+      border:0;
+      background:transparent;
+      color:#111827;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      padding:0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Invoice review drawer (wider) */
+    .inv-drawer{ width:min(820px, 96vw); }
+    .grid3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 980px){ .grid3{grid-template-columns: 1fr} }
+    .panelmini{
+      border:1px solid rgba(229,231,235,.9);
+      background: rgba(255,255,255,.95);
+      border-radius: 12px;
+      overflow:hidden;
+      box-shadow: 0 2px 12px rgba(17,24,39,.05);
+    }
+    .panelmini .h{
+      padding:10px;
+      background: rgba(243,244,246,.65);
+      border-bottom:1px solid rgba(229,231,235,.75);
+      font-size:12px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panelmini .b{ padding:10px; }
+    .smalltable{
+      width:100%;
+      border:0;
+      border-radius: 0;
+      background: transparent;
+    }
+    .smalltable th, .smalltable td{
+      padding:8px 6px;
+      border-bottom:1px solid rgba(229,231,235,.65);
+      font-size:12px;
+    }
+    .smalltable th{
+      background: transparent;
+      color: var(--muted);
+      font-weight:900;
+      font-size:11px;
+      letter-spacing:.2px;
+    }
+    .smalltable tr:last-child td{border-bottom:none}
+    .callout{
+      padding:10px;
+      border-radius: 12px;
+      border:1px solid rgba(229,231,235,.9);
+      background: rgba(248,250,252,.9);
+      font-size:12px;
+      color:#111827;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">N</div>
+          <div>
+            <h1>Nando’s Head Office</h1>
+            <div class="sub">Leeds Area — Supply Desk</div>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <div class="meta">
+            <span class="pill" title="Data refreshes automatically on load">
+              <span class="dot"></span>
+              <span>Last updated: <span id="lastUpdated" class="mono">--:--</span></span>
+            </span>
+            <span class="pill"><span class="dot"></span><span>Internal use only</span></span>
+          </div>
+
+          <button class="iconbtn" id="btnRefresh" title="Refresh data" aria-label="Refresh data">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.54l-1.42 1.42A7 7 0 0 0 19 13c0-3.87-3.13-7-7-7Zm-5 7a5 5 0 0 1 8.66-3.54l1.42-1.42A7 7 0 0 0 5 11c0 3.87 3.13 7 7 7v3l4-4-4-4v3c-2.76 0-5-2.24-5-5Z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="kpis" id="kpis"></div>
+    </header>
+
+    <main>
+      <div class="shell">
+        <section class="panel" aria-label="Sites">
+          <div class="panel-h">
+            <div>
+              <h2>Sites</h2>
+              <div class="hint">Leeds area portfolio view</div>
+            </div>
+            <div class="chip" id="siteCountChip">—</div>
+          </div>
+          <div class="sites" id="sites"></div>
+        </section>
+
+        <section class="panel" aria-label="Detail">
+          <div class="detail">
+            <div class="detail-head">
+              <div>
+                <div class="detail-title" id="detailTitle">—</div>
+                <div class="detail-sub" id="detailSub">—</div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Views">
+                <button class="tab active" id="tabOverview" role="tab" aria-selected="true">Overview</button>
+                <button class="tab" id="tabPlan" role="tab" aria-selected="false">Delivery plan</button>
+                <button class="tab" id="tabInvoices" role="tab" aria-selected="false">Invoices</button>
+                <button class="tab" id="tabReports" role="tab" aria-selected="false">Reports</button>
+              </div>
+            </div>
+
+            <div id="viewOverview">
+              <table aria-label="Stock table">
+                <thead>
+                  <tr>
+                    <th style="width:32%">Item</th>
+                    <th style="width:12%">On hand</th>
+                    <th style="width:14%">Avg use/day</th>
+                    <th style="width:12%">Cover (days)</th>
+                    <th style="width:14%">Status</th>
+                    <th style="width:16%">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="stockRows"></tbody>
+              </table>
+
+              <div class="feed" aria-label="Operations feed">
+                <div class="feed-h">Operations feed</div>
+                <div class="feed-list" id="feedList"></div>
+              </div>
+            </div>
+
+            <div id="viewPlan" style="display:none">
+              <div class="plan-summary" id="planSummary"></div>
+              <table aria-label="Delivery plan">
+                <thead>
+                  <tr>
+                    <th style="width:14%">ETA</th>
+                    <th style="width:26%">Restaurant</th>
+                    <th style="width:22%">Item</th>
+                    <th style="width:12%">Qty</th>
+                    <th style="width:12%">Type</th>
+                    <th style="width:14%" class="right">Cost</th>
+                  </tr>
+                </thead>
+                <tbody id="planRows"></tbody>
+              </table>
+              <div class="muted" style="margin-top:10px; font-size:12px;">
+                Status: Planned (internal). Costs are committed against the current period budget.
+              </div>
+            </div>
+
+            <div id="viewInvoices" style="display:none">
+              <div class="inv-summary" id="invSummary"></div>
+              <table aria-label="Invoices">
+                <thead>
+                  <tr>
+                    <th style="width:18%">Invoice ref</th>
+                    <th style="width:22%">Supplier</th>
+                    <th style="width:24%">Restaurant</th>
+                    <th style="width:14%">Invoice date</th>
+                    <th style="width:12%" class="right">Total</th>
+                    <th style="width:10%">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="invRows"></tbody>
+              </table>
+              <div class="muted" style="margin-top:10px; font-size:12px;">
+                Review invoices using 3-way matching (Delivery plan • Goods received • Supplier invoice).
+              </div>
+            </div>
+
+            <div id="viewReports" style="display:none">
+              <div style="padding:10px 0 0; color: var(--muted); font-size:12px; line-height:1.4">
+                Reports are a lightweight summary view. This prototype includes:
+                <ul>
+                  <li>Top items at risk across Leeds</li>
+                  <li>Estimated days of cover distribution</li>
+                  <li>Spend breakdown by delivery type</li>
+                </ul>
+              </div>
+              <div class="feed" style="margin-top:12px">
+                <div class="feed-h">Reports</div>
+                <div class="feed-list" id="reportsList"></div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Shared backdrop -->
+    <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+
+    <!-- Replenishment Drawer -->
+    <aside class="drawer" id="drawer" aria-label="Replenishment drawer" aria-hidden="true">
+      <div class="drawer-h">
+        <div>
+          <h3>Replenishment</h3>
+          <div class="sub" id="drawerSub">—</div>
+        </div>
+        <button class="iconbtn" id="btnCloseDrawer" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="kv">
+          <div class="box">
+            <div class="k">Restaurant</div>
+            <div class="v" id="drawerRestaurant">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Item</div>
+            <div class="v" id="drawerItem">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Current cover</div>
+            <div class="v"><span id="drawerCover" class="mono">—</span> days</div>
+          </div>
+          <div class="box">
+            <div class="k">Standard lead time</div>
+            <div class="v"><span id="drawerLead" class="mono">—</span> days</div>
+          </div>
+        </div>
+
+        <div style="margin: 10px 0 12px; font-size:12px; color:var(--muted)">
+          Delivery options below update the delivery plan and committed budget immediately.
+        </div>
+
+        <div id="drawerOptions"></div>
+
+        <div style="margin-top:12px; font-size:12px; color:var(--muted)">Reason (optional)</div>
+        <select id="drawerReason" style="width:100%; margin-top:6px; padding:10px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:700; font-size:12px;">
+          <option value="">—</option>
+          <option>Critical stock risk</option>
+          <option>High demand</option>
+          <option>Delivery issue</option>
+          <option>Manager request</option>
+        </select>
+      </div>
+
+      <div class="drawer-f">
+        <button class="btn ghost" id="btnCancel">Cancel</button>
+        <button class="btn" id="btnAddPlan" disabled>Add to delivery plan</button>
+      </div>
+    </aside>
+
+    <!-- Invoice Review Drawer (3-way match) -->
+    <aside class="drawer inv-drawer" id="invDrawer" aria-label="Invoice review drawer" aria-hidden="true" style="z-index:46;">
+      <div class="drawer-h">
+        <div>
+          <h3>Invoice review</h3>
+          <div class="sub" id="invDrawerSub">—</div>
+        </div>
+        <button class="iconbtn" id="btnCloseInvDrawer" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="kv">
+          <div class="box">
+            <div class="k">Invoice ref</div>
+            <div class="v" id="invRef">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Supplier</div>
+            <div class="v" id="invSupplier">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Restaurant</div>
+            <div class="v" id="invRestaurant">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Invoice date</div>
+            <div class="v" id="invDate">—</div>
+          </div>
+        </div>
+
+        <div class="callout" id="invHint" style="margin-bottom:10px;">
+          Compare Delivery plan, Goods received and Supplier invoice. Approve if values match. Flag if there is a discrepancy.
+        </div>
+
+        <div class="grid3">
+          <div class="panelmini">
+            <div class="h">
+              <span>Delivery plan</span>
+              <span class="chip watch">PO</span>
+            </div>
+            <div class="b">
+              <table class="smalltable" aria-label="Delivery plan lines">
+                <thead><tr><th>Item</th><th class="right">Qty</th><th class="right">Unit</th><th class="right">Line</th></tr></thead>
+                <tbody id="poLines"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panelmini">
+            <div class="h">
+              <span>Goods received</span>
+              <span class="chip ok">GRN</span>
+            </div>
+            <div class="b">
+              <table class="smalltable" aria-label="Goods received lines">
+                <thead><tr><th>Item</th><th class="right">Received</th><th class="right">Notes</th></tr></thead>
+                <tbody id="grnLines"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panelmini">
+            <div class="h">
+              <span>Supplier invoice</span>
+              <span class="chip action">INV</span>
+            </div>
+            <div class="b">
+              <table class="smalltable" aria-label="Invoice lines">
+                <thead><tr><th>Item</th><th class="right">Billed</th><th class="right">Unit</th><th class="right">Line</th></tr></thead>
+                <tbody id="invLines"></tbody>
+              </table>
+              <div style="margin-top:10px; display:grid; gap:6px; font-size:12px;">
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                  <span class="muted">Delivery charge</span>
+                  <strong class="mono" id="invDelCharge">—</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                  <span class="muted">Subtotal (ex VAT)</span>
+                  <strong class="mono" id="invSub">—</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                  <span class="muted">VAT (20%)</span>
+                  <strong class="mono" id="invVat">—</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px; padding-top:6px; border-top:1px solid rgba(229,231,235,.75);">
+                  <span class="muted">Total</span>
+                  <strong class="mono" id="invTotal">—</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px; font-size:12px; color:var(--muted)">If flagging, select a reason (optional).</div>
+        <select id="invFlagReason" style="width:100%; margin-top:6px; padding:10px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:800; font-size:12px;">
+          <option value="">—</option>
+          <option>Quantity mismatch</option>
+          <option>Price mismatch</option>
+          <option>Delivery charge query</option>
+          <option>VAT query</option>
+          <option>Duplicate invoice</option>
+        </select>
+      </div>
+
+      <div class="drawer-f">
+        <button class="btn ghost" id="btnFlagInv">Flag discrepancy</button>
+        <button class="btn" id="btnApproveInv">Approve invoice</button>
+      </div>
+    </aside>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <div style="font-weight:900">Update</div>
+      <div class="small" id="toastSub">—</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // ---------- Config ----------
+  const RESTAURANTS = [
+    "Leeds – Trinity",
+    "Leeds – Briggate",
+    "Leeds – The Light",
+    "Leeds – Cardigan Fields",
+    "Leeds – Headingley",
+    "Leeds – White Rose",
+    "Leeds – Skelton Lake",
+    "Leeds – Thorpe Park"
+  ];
+
+  const SUPPLIERS = [
+    "Nando’s Approved Foods Ltd",
+    "Leeds Produce & Poultry Co.",
+    "Northern Catering Supplies"
+  ];
+
+  // Added extra items (now 10)
+const KEY_ITEMS = [
+  { id:"chicken",   name:"Chicken",               unit:"kg" },
+  { id:"wraps",     name:"Wraps",                 unit:"packs" },
+  { id:"buns",      name:"Burger buns",           unit:"packs" },
+  { id:"pittas",    name:"Pittas",                unit:"packs" },
+  { id:"sauce",     name:"PERi-PERi sauce bottles", unit:"bottles" },
+  { id:"gloves",    name:"Gloves",                unit:"boxes" },
+  { id:"halloumi",  name:"Halloumi",              unit:"packs" },
+  { id:"chips",     name:"Chips",                 unit:"bags" },
+  { id:"boxes",     name:"Takeaway boxes",        unit:"packs" },
+  { id:"bags",      name:"Takeaway bags",         unit:"packs" },
+];
+
+  // Lead times (days)
+  const LEAD_STANDARD = 2;
+  const BUFFER_DAYS = 1;
+
+  // Budget range (£) per period (monthly)
+  const BUDGET_RANGE = [2600, 5200];
+
+  // Invoice realism settings
+  const VAT_RATE = 0.20;
+
+  // We guarantee: at least 1 invoice discrepancy out of the 8.
+  const INVOICE_DISCREPANCY_RATE = 0.28; // others may still get one
+
+  // Some GRN/price noise
+  const LINE_SHORT_DELIVERY_RATE = 0.20;
+  const LINE_PRICE_VARIANCE_RATE = 0.16;
+
+  // We guarantee: every restaurant has at least one item below forecast
+  const FORCE_LOW_STOCK_COVER_RANGE = [0.8, 2.7]; // forces watch/action for one item per restaurant
+
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+
+  function nowHHMM(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    return `${hh}:${mm}`;
+  }
+  function todayDMY(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+  function mulberry32(a){
+    return function(){
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
+  function seedFromTime(){
+    return (Date.now() ^ (Math.random()*1e9)) >>> 0;
+  }
+
+  function fmtGBP(n){
+    const sign = n < 0 ? "-" : "";
+    const v = Math.abs(n);
+    return sign + "£" + v.toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtGBP0(n){
+    const sign = n < 0 ? "-" : "";
+    const v = Math.abs(n);
+    return sign + "£" + v.toLocaleString("en-GB", {maximumFractionDigits:0});
+  }
+  function fmtNum(n){
+    const isInt = Math.abs(n - Math.round(n)) < 1e-9;
+    return isInt ? String(Math.round(n)) : n.toFixed(1);
+  }
+
+  function statusFromCover(coverDays){
+    if (coverDays < LEAD_STANDARD) return "action";
+    if (coverDays < (LEAD_STANDARD + BUFFER_DAYS)) return "watch";
+    return "ok";
+  }
+  function statusLabel(key){
+    return key === "action" ? "Action required" : key === "watch" ? "Watch" : "OK";
+  }
+
+  function addDaysLabel(days){
+    if (days === 1) return "next day";
+    return `${days} days`;
+  }
+
+  function etaFromNow(days){
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    const opts = { weekday: "short", day: "2-digit", month: "short" };
+    return d.toLocaleDateString("en-GB", opts).replace(",", "");
+  }
+
+  function roundMoney(n){ return Math.round(n * 100) / 100; }
+
+  // ---------- State ----------
+  let rng = mulberry32(seedFromTime());
+
+  let state = {
+    budgetTotal: 0,
+    plan: [], // {id, etaDays, etaLabel, restaurant, itemId, itemName, unit, qtyNum, qtyText, type, cost, reason, unitCost, invoiced:false, seeded?:true}
+    invoices: [],
+    postedTotal: 0,
+    restaurants: [],
+    selectedSiteIdx: 0,
+    view: "overview",
+    drawer: { open:false, restaurant:null, item:null, option:null },
+    invDrawer: { open:false, invId:null },
+    feed: [],
+    planSeq: 1000,
+    invSeq: 1040,
+    forcedBadInvoiceRestaurant: null
+  };
+
+  // ---------- Data generation ----------
+  function pickBusy(){
+    const r = rng();
+    if (r < 0.2) return "Quiet";
+    if (r < 0.75) return "Normal";
+    return "Busy";
+  }
+  function busyMultiplier(busy){
+    return busy === "Busy" ? 1.25 : busy === "Quiet" ? 0.85 : 1.0;
+  }
+
+  function genAvgUse(itemId, busy){
+    const m = busyMultiplier(busy);
+    let base;
+switch(itemId){
+  case "chicken": base = 10 + rng()*8; break;          // kg/day
+  case "wraps": base = 6 + rng()*6; break;             // packs/day
+  case "buns": base = 5 + rng()*5; break;              // packs/day
+  case "pittas": base = 6 + rng()*6; break;            // packs/day
+  case "sauce": base = 8 + rng()*8; break;             // bottles/day
+  case "gloves": base = 1 + rng()*2; break;            // boxes/day
+  case "halloumi": base = 4 + rng()*5; break;          // packs/day
+  case "chips": base = 7 + rng()*8; break;             // bags/day
+  case "boxes": base = 15 + rng()*15; break;           // packs/day
+  case "bags": base = 20 + rng()*20; break;            // packs/day
+  default: base = 3 + rng()*4;
+}
+    return Math.max(0.8, base*m);
+  }
+
+  function genOnHand(avg){
+    const targetCover = 1.2 + rng()*5.2; // 1.2 to 6.4
+    const onHand = avg * targetCover;
+    return Math.max(1, onHand * (0.92 + rng()*0.16));
+  }
+
+  function qtyForOption(itemId, size){
+const map = {
+  chicken:   { small: 15, med: 25, bulk: 50 },
+  wraps:     { small: 10, med: 20, bulk: 40 },
+  buns:      { small: 10, med: 20, bulk: 40 },
+  pittas:    { small: 10, med: 20, bulk: 40 },
+  sauce:     { small: 24, med: 48, bulk: 96 },
+  gloves:    { small: 2,  med: 4,  bulk: 8 },
+  halloumi:  { small: 8,  med: 16, bulk: 32 },
+  chips:     { small: 10, med: 20, bulk: 40 },
+  boxes:     { small: 25, med: 50, bulk: 100 },
+  bags:      { small: 50, med: 100, bulk: 200 }
+};
+    const entry = map[itemId] || { small: 10, med: 20, bulk: 40 };
+    return size === "small" ? entry.small : size === "med" ? entry.med : entry.bulk;
+  }
+
+  function unitCost(itemId){
+switch(itemId){
+  case "chicken": return 4.30;
+  case "wraps": return 7.50;
+  case "buns": return 6.80;
+  case "pittas": return 6.40;
+  case "sauce": return 1.10;
+  case "gloves": return 5.20;
+  case "halloumi": return 4.10;
+  case "chips": return 6.20;
+  case "boxes": return 0.55;
+  case "bags": return 0.35;
+  default: return 2.00;
+}
+  }
+
+  function deliveryCost(itemId, qty, type){
+    const base = qty * unitCost(itemId);
+    let premium;
+    if (type === "Priority"){
+      premium = Math.max(18, base * 0.18);
+      return roundMoney(base + premium);
+    }
+    if (type === "Bulk"){
+      const discount = base * 0.06;
+      const handling = 12;
+      return roundMoney((base - discount) + handling);
+    }
+    premium = Math.max(10, base * 0.10);
+    return roundMoney(base + premium);
+  }
+
+  function genDeliveryOptions(item){
+    const medQty = qtyForOption(item.id, "med");
+    const bulkQty = qtyForOption(item.id, "bulk");
+    return [
+      { type: "Standard", etaDays: 2, qty: medQty, tag: "Standard", cost: deliveryCost(item.id, medQty, "Standard") },
+      { type: "Priority", etaDays: 1, qty: medQty, tag: "Faster", cost: deliveryCost(item.id, medQty, "Priority") },
+      { type: "Bulk", etaDays: 3, qty: bulkQty, tag: "Best value", cost: deliveryCost(item.id, bulkQty, "Bulk") },
+    ];
+  }
+
+  function genSystemFeed(){
+    const messages = [
+      "Supplier notice: packaging lead time extended on standard deliveries.",
+      "Forecast updated following weekend trading patterns.",
+      "Partial delivery recorded on last run — check delivery confirmations.",
+      "Ops note: increased demand expected in city centre locations.",
+      "Temperature audit completed — no action required.",
+      "Driver schedule updated for next-day runs."
+    ];
+    const count = 4 + Math.floor(rng()*3);
+    const list = [];
+    const base = new Date();
+    for (let i=0;i<count;i++){
+      const t = new Date(base.getTime() - (i*12 + Math.floor(rng()*9))*60000);
+      const hh = String(t.getHours()).padStart(2,'0');
+      const mm = String(t.getMinutes()).padStart(2,'0');
+      list.push({ time: `${hh}:${mm}`, text: messages[Math.floor(rng()*messages.length)] });
+    }
+    return list;
+  }
+
+  function generateAll(){
+    rng = mulberry32(seedFromTime());
+
+    state.budgetTotal = Math.round(BUDGET_RANGE[0] + rng()*(BUDGET_RANGE[1]-BUDGET_RANGE[0]));
+    state.plan = [];
+    state.invoices = [];
+    state.postedTotal = 0;
+    state.selectedSiteIdx = 0;
+    state.view = "overview";
+    state.planSeq = 1000 + Math.floor(rng()*400);
+    state.invSeq = 1040 + Math.floor(rng()*250);
+
+    // pick the one restaurant that will DEFINITELY have a discrepancy invoice
+    state.forcedBadInvoiceRestaurant = RESTAURANTS[Math.floor(rng()*RESTAURANTS.length)];
+
+    // Build restaurants with stock
+    const sites = RESTAURANTS.map(name => {
+      const busy = pickBusy();
+      const items = KEY_ITEMS.map(item => {
+        const avg = genAvgUse(item.id, busy);
+        const onHand = genOnHand(avg);
+        const cover = onHand / avg;
+        const status = statusFromCover(cover);
+        return { ...item, avgUse: avg, onHand, cover, status, options: genDeliveryOptions(item) };
+      });
+
+      // Force at least ONE item into watch/action for every restaurant
+      const forcedIdx = Math.floor(rng()*items.length);
+      const forced = items[forcedIdx];
+      const targetCover = FORCE_LOW_STOCK_COVER_RANGE[0] + rng()*(FORCE_LOW_STOCK_COVER_RANGE[1]-FORCE_LOW_STOCK_COVER_RANGE[0]);
+      forced.onHand = Math.max(1, forced.avgUse * targetCover);
+      forced.cover = forced.onHand / forced.avgUse;
+      forced.status = statusFromCover(forced.cover);
+
+      return { name, busy, items };
+    });
+
+    state.restaurants = sites.map((s, idx) => ({...s, _idx: idx}));
+    state.feed = genSystemFeed();
+
+    // Seed a delivery plan line for EACH restaurant (so invoices can be 8/8)
+    seedInitialPlanForAllSites();
+
+    const ordered = computeSitesOrdered();
+    state.selectedSiteIdx = ordered[0]?.displayIdx ?? 0;
+
+    $("lastUpdated").textContent = nowHHMM();
+  }
+
+  // ---------- Computations ----------
+  function computeSiteSummary(site){
+    const actionCount = site.items.filter(i => i.status === "action").length;
+    const watchCount = site.items.filter(i => i.status === "watch").length;
+    const okCount = site.items.filter(i => i.status === "ok").length;
+    const below = actionCount + watchCount;
+    const status = actionCount > 0 ? "action" : watchCount > 0 ? "watch" : "ok";
+    const planned = state.plan.filter(p => p.restaurant === site.name);
+    let nextEta = "None scheduled";
+    if (planned.length){
+      const minDays = Math.min(...planned.map(p => p.etaDays));
+      nextEta = etaFromNow(minDays);
+    }
+    return { actionCount, watchCount, okCount, below, status, nextEta };
+  }
+
+  function computeSitesOrdered(){
+    const withMeta = state.restaurants.map((s, displayIdx) => {
+      const sum = computeSiteSummary(s);
+      return { site: s, displayIdx, sum };
+    });
+    const score = (sum) => (sum.actionCount * 100) + (sum.watchCount * 10) + sum.below;
+    withMeta.sort((a,b) => {
+      const da = score(a.sum), db = score(b.sum);
+      if (db !== da) return db - da;
+      return a.site.name.localeCompare(b.site.name);
+    });
+    return withMeta;
+  }
+
+  function committedSpend(){
+    return state.plan.reduce((acc, p) => acc + p.cost, 0);
+  }
+
+  function remainingSpend(){
+    return state.budgetTotal - state.postedTotal;
+  }
+
+  function pendingInvoicesCount(){
+    return state.invoices.filter(i => i.status === "Pending").length;
+  }
+
+  function countsAcrossAll(){
+    let action = 0, watch = 0, ok = 0;
+    for (const s of state.restaurants){
+      for (const it of s.items){
+        if (it.status === "action") action++;
+        else if (it.status === "watch") watch++;
+        else ok++;
+      }
+    }
+    const atRiskSites = state.restaurants.filter(s => computeSiteSummary(s).status !== "ok").length;
+    return { action, watch, ok, atRiskSites, openActions: action };
+  }
+
+  function topRiskItemsAcrossLeeds(){
+    const map = new Map();
+    for (const s of state.restaurants){
+      for (const it of s.items){
+        const key = it.name;
+        if (!map.has(key)) map.set(key, { action:0, watch:0 });
+        const obj = map.get(key);
+        if (it.status === "action") obj.action++;
+        else if (it.status === "watch") obj.watch++;
+      }
+    }
+    const arr = Array.from(map.entries()).map(([name, v]) => ({ name, ...v, total: v.action*2 + v.watch }));
+    arr.sort((a,b) => (b.action - a.action) || (b.total - a.total) || a.name.localeCompare(b.name));
+    return arr.slice(0, 8);
+  }
+
+  function spendByType(){
+    const out = { Standard:0, Priority:0, Bulk:0 };
+    for (const p of state.plan){
+      out[p.type] = (out[p.type] || 0) + p.cost;
+    }
+    return out;
+  }
+
+  // ---------- Plan seeding (ensures 8 restaurants always have planned orders) ----------
+  function addPlanLine({restaurant, item, opt, reason="", seeded=false, applyStock=false}){
+    const etaLabel = etaFromNow(opt.etaDays);
+    const unitC = unitCost(item.id);
+    const qtyNum = opt.qty;
+
+    state.plan.push({
+      id: `pl_${state.planSeq++}`,
+      etaDays: opt.etaDays,
+      etaLabel,
+      restaurant,
+      itemId: item.id,
+      itemName: item.name,
+      unit: item.unit,
+      qtyNum,
+      qtyText: `${qtyNum} ${item.unit}`,
+      type: opt.type,
+      cost: opt.cost,
+      reason,
+      unitCost: unitC,
+      invoiced: false,
+      seeded
+    });
+
+    if (applyStock){
+      item.onHand = item.onHand + opt.qty;
+      item.cover = item.onHand / item.avgUse;
+      item.status = statusFromCover(item.cover);
+    }
+  }
+
+  function seedInitialPlanForAllSites(){
+    // One planned order per restaurant: choose the lowest-cover item (guaranteed watch/action exists)
+    for (const site of state.restaurants){
+      const sortedByRisk = [...site.items].sort((a,b) => (a.cover - b.cover));
+      const targetItem = sortedByRisk[0];
+      // Use Standard option for baseline realism
+      const standardOpt = targetItem.options.find(o => o.type === "Standard") || targetItem.options[0];
+
+      addPlanLine({
+        restaurant: site.name,
+        item: targetItem,
+        opt: standardOpt,
+        reason: "Replenishment",
+        seeded: true,
+        applyStock: false // keep stock tables showing ongoing needs
+      });
+    }
+  }
+
+  // ---------- Invoices (3-way matching) ----------
+  function ensureInvoicesGenerated(){
+    const pendingLines = state.plan.filter(p => !p.invoiced);
+    if (!pendingLines.length) return;
+
+    const byRestaurant = new Map();
+    for (const line of pendingLines){
+      if (!byRestaurant.has(line.restaurant)) byRestaurant.set(line.restaurant, []);
+      byRestaurant.get(line.restaurant).push(line);
+    }
+
+    for (const [restaurant, lines] of byRestaurant.entries()){
+      // Mark plan lines as invoiced
+      for (const l of lines) l.invoiced = true;
+
+      const supplier = SUPPLIERS[Math.floor(rng()*SUPPLIERS.length)];
+      const invRef = `INV-${state.invSeq++}`;
+      const date = todayDMY();
+
+      const poLines = lines.map(l => ({
+        planId: l.id,
+        itemId: l.itemId,
+        itemName: l.itemName,
+        qty: l.qtyNum,
+        unit: l.unit,
+        unitCost: l.unitCost,
+        lineTotal: roundMoney(l.qtyNum * l.unitCost)
+      }));
+
+      const grnLines = poLines.map(pl => {
+        let received = pl.qty;
+        let note = "—";
+        if (rng() < LINE_SHORT_DELIVERY_RATE){
+          const shortBy = Math.max(1, Math.floor(pl.qty * (0.06 + rng()*0.10)));
+          received = Math.max(0, pl.qty - shortBy);
+          note = "Short delivery";
+        }
+        return { itemId: pl.itemId, itemName: pl.itemName, receivedQty: received, note };
+      });
+
+      const invLines = poLines.map((pl, idx) => {
+        const grn = grnLines[idx];
+        let billedQty = (rng() < 0.75) ? grn.receivedQty : pl.qty;
+        let billedUnitCost = pl.unitCost;
+        if (rng() < LINE_PRICE_VARIANCE_RATE){
+          const bump = 1 + (rng() < 0.5 ? 0.03 : 0.06);
+          billedUnitCost = roundMoney(pl.unitCost * bump);
+        }
+        return {
+          itemId: pl.itemId,
+          itemName: pl.itemName,
+          billedQty,
+          unit: pl.unit,
+          unitCost: billedUnitCost,
+          lineTotal: roundMoney(billedQty * billedUnitCost)
+        };
+      });
+
+      let deliveryCharge = roundMoney(8 + rng()*22);
+      let subtotal = roundMoney(invLines.reduce((a,l)=>a+l.lineTotal,0) + deliveryCharge);
+      let vat = roundMoney(subtotal * VAT_RATE);
+      let total = roundMoney(subtotal + vat);
+
+      // Discrepancy logic:
+      // - One restaurant is forced to have a discrepancy every load
+      // - Others may still get one sometimes
+      let discrepancyTag = "";
+      const mustBeBad = (restaurant === state.forcedBadInvoiceRestaurant);
+      const shouldAddIssue = mustBeBad || (rng() < INVOICE_DISCREPANCY_RATE);
+
+      if (shouldAddIssue){
+        const kinds = ["Quantity mismatch", "Price mismatch", "Delivery charge query", "VAT query"];
+        const pick = kinds[Math.floor(rng()*kinds.length)];
+        discrepancyTag = pick;
+
+        if (pick === "Quantity mismatch"){
+          const i = Math.floor(rng()*invLines.length);
+          const add = Math.max(1, Math.floor(1 + rng()*3));
+          invLines[i].billedQty = invLines[i].billedQty + add;
+          invLines[i].lineTotal = roundMoney(invLines[i].billedQty * invLines[i].unitCost);
+        } else if (pick === "Price mismatch"){
+          const i = Math.floor(rng()*invLines.length);
+          invLines[i].unitCost = roundMoney(invLines[i].unitCost * 1.08);
+          invLines[i].lineTotal = roundMoney(invLines[i].billedQty * invLines[i].unitCost);
+        } else if (pick === "Delivery charge query"){
+          deliveryCharge = roundMoney(deliveryCharge + 12 + rng()*10);
+        } else if (pick === "VAT query"){
+          // VAT slightly wrong
+          vat = roundMoney(vat + (rng() < 0.5 ? -3.10 : 4.25));
+        }
+
+        // Recalc totals (except VAT query where VAT was adjusted intentionally)
+        subtotal = roundMoney(invLines.reduce((a,l)=>a+l.lineTotal,0) + deliveryCharge);
+        if (pick !== "VAT query"){
+          vat = roundMoney(subtotal * VAT_RATE);
+        }
+        total = roundMoney(subtotal + vat);
+      }
+
+      state.invoices.push({
+        id: `inv_${invRef}_${Math.floor(rng()*10000)}`,
+        ref: invRef,
+        supplier,
+        restaurant,
+        date,
+        status: "Pending",
+        flagReason: "",
+        poLines,
+        grnLines,
+        invLines,
+        deliveryCharge,
+        subtotal,
+        vat,
+        total,
+        discrepancyTag
+      });
+    }
+  }
+
+  function chipForInvStatus(status){
+    if (status === "Approved") return "ok";
+    if (status === "Flagged") return "action";
+    return "watch";
+  }
+
+  // ---------- Rendering ----------
+  function renderKPIs(){
+    const committed = committedSpend();
+    const posted = state.postedTotal;
+    const remaining = remainingSpend();
+    const pending = pendingInvoicesCount();
+    const { atRiskSites } = countsAcrossAll();
+
+    const kpis = [
+      { label: "Budget (period)", value: fmtGBP0(state.budgetTotal), sub: "Leeds area supply budget" },
+      { label: "Committed", value: fmtGBP0(committed), sub: "Planned deliveries (total)" },
+      { label: "Posted", value: fmtGBP0(posted), sub: "Approved invoices (total)" },
+      { label: "Remaining", value: fmtGBP0(remaining), sub: remaining < 0 ? "Budget exceeded" : "Budget available", alert: remaining < 0 },
+      { label: "Pending invoices", value: String(pending), sub: `At risk sites: ${atRiskSites}` }
+    ];
+
+    $("kpis").innerHTML = kpis.map(k => `
+      <div class="kpi ${k.alert ? "alert":""}">
+        <div class="label">
+          <span>${k.label}</span>
+          ${k.alert ? `<span class="chip action">Budget exceeded</span>` : ``}
+        </div>
+        <div class="value mono">${k.value}</div>
+        <div class="sub">${k.sub}</div>
+      </div>
+    `).join("");
+  }
+
+  function renderSites(){
+    const ordered = computeSitesOrdered();
+    const sitesEl = $("sites");
+    $("siteCountChip").textContent = `${RESTAURANTS.length} sites`;
+
+    sitesEl.innerHTML = ordered.map(({site, displayIdx, sum}) => {
+      const active = displayIdx === state.selectedSiteIdx;
+      const belowTxt = sum.below === 0 ? "No items below forecast" : `${sum.below} item${sum.below===1?"":"s"} below forecast`;
+      return `
+        <div class="site ${active ? "active":""}" data-display-idx="${displayIdx}">
+          <div class="row1">
+            <div class="name">${site.name}</div>
+            <div class="chip ${sum.status}">${statusLabel(sum.status)}</div>
+          </div>
+          <div class="row2">
+            <div>${belowTxt}</div>
+            <div class="mono">${sum.nextEta}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    sitesEl.querySelectorAll(".site").forEach(el => {
+      el.addEventListener("click", () => {
+        state.selectedSiteIdx = Number(el.getAttribute("data-display-idx"));
+        renderAll();
+      });
+    });
+  }
+
+  function renderDetailHeader(){
+    const site = state.restaurants[state.selectedSiteIdx];
+    if (!site) return;
+    $("detailTitle").textContent = site.name;
+    $("detailSub").textContent = `Forecast based on average daily usage • Trading profile: ${site.busy}`;
+  }
+
+  function formatOnHand(item){
+    const val = item.onHand;
+    if (item.unit === "kg") return `${fmtNum(val)}kg`;
+    if (item.unit === "boxes") return `${fmtNum(val)} boxes`;
+    if (item.unit === "packs") return `${fmtNum(val)} packs`;
+    if (item.unit === "bottles") return `${fmtNum(val)} bottles`;
+    if (item.unit === "bags") return `${fmtNum(val)} bags`;
+    if (item.unit === "units") return `${fmtNum(val)} units`;
+    return `${fmtNum(val)} ${item.unit}`;
+  }
+
+  function formatAvgUse(item){
+    const v = item.avgUse;
+    const show = (item.id === "gloves") ? v.toFixed(1) : (Math.abs(v - Math.round(v)) < 1e-6 ? String(Math.round(v)) : v.toFixed(1));
+    if (item.unit === "kg") return `${show}kg`;
+    if (item.unit === "boxes") return `${show} boxes`;
+    if (item.unit === "packs") return `${show} packs`;
+    if (item.unit === "bottles") return `${show}`;
+    if (item.unit === "bags") return `${show} bags`;
+    if (item.unit === "units") return `${show} units`;
+    return show;
+  }
+
+  function renderStockTable(){
+    const site = state.restaurants[state.selectedSiteIdx];
+    const tbody = $("stockRows");
+    if (!site) { tbody.innerHTML = ""; return; }
+
+    tbody.innerHTML = site.items.map((it, idx) => {
+      const coverTxt = it.cover >= 9.95 ? "10+" : it.cover.toFixed(1);
+      const canAdd = it.status !== "ok";
+      return `
+        <tr>
+          <td><strong>${it.name}</strong><div class="muted" style="font-size:11px; margin-top:3px;">Unit: ${it.unit}</div></td>
+          <td class="num mono">${formatOnHand(it)}</td>
+          <td class="num mono">${formatAvgUse(it)}</td>
+          <td class="num mono">${coverTxt}</td>
+          <td>
+            <span class="status ${it.status}">
+              <span class="bar"></span>
+              <span class="chip ${it.status}">${statusLabel(it.status)}</span>
+            </span>
+          </td>
+          <td>
+            ${canAdd ? `<button class="btn" data-item-idx="${idx}">Add</button>` : `<button class="btn ghost" disabled>—</button>`}
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    tbody.querySelectorAll("button.btn:not([disabled])").forEach(btn => {
+      btn.addEventListener("click", () => openDrawerForItem(Number(btn.getAttribute("data-item-idx"))));
+    });
+  }
+
+  function renderFeed(){
+    $("feedList").innerHTML = state.feed.map(f => `
+      <div class="feed-item">
+        <div class="t mono">${f.time}</div>
+        <div>${f.text}</div>
+      </div>
+    `).join("");
+  }
+
+  function renderPlan(){
+    const planRows = $("planRows");
+    const planSummary = $("planSummary");
+
+    planSummary.innerHTML = `
+      <div class="pill"><span class="dot"></span><span>Committed: <strong class="mono">${fmtGBP0(committedSpend())}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Posted: <strong class="mono">${fmtGBP0(state.postedTotal)}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Budget remaining: <strong class="mono">${fmtGBP0(remainingSpend())}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Items planned: <strong class="mono">${state.plan.length}</strong></span></div>
+    `;
+
+    const sorted = [...state.plan].sort((a,b) => (a.etaDays - b.etaDays) || a.restaurant.localeCompare(b.restaurant));
+
+    planRows.innerHTML = sorted.map(p => `
+      <tr>
+        <td class="mono">${p.etaLabel}</td>
+        <td><strong>${p.restaurant}</strong></td>
+        <td>${p.itemName}</td>
+        <td class="mono">${p.qtyText}</td>
+        <td><span class="chip ${p.type === "Priority" ? "action" : p.type === "Bulk" ? "ok" : "watch"}">${p.type}</span></td>
+        <td class="mono right">${fmtGBP(p.cost)}</td>
+      </tr>
+    `).join("");
+  }
+
+  function renderInvoices(){
+    ensureInvoicesGenerated();
+
+    const invSummary = $("invSummary");
+    const invRows = $("invRows");
+
+    const totalInv = state.invoices.length; // should be 8
+    const pending = pendingInvoicesCount();
+    const approved = state.invoices.filter(i => i.status === "Approved").length;
+    const flagged = state.invoices.filter(i => i.status === "Flagged").length;
+
+    invSummary.innerHTML = `
+      <div class="pill"><span class="dot"></span><span>Invoices: <strong class="mono">${totalInv}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Pending: <strong class="mono">${pending}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Approved: <strong class="mono">${approved}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Flagged: <strong class="mono">${flagged}</strong></span></div>
+      <div class="pill"><span class="dot"></span><span>Quality check: <strong class="mono">1+ requires review</strong></span></div>
+    `;
+
+    // Sort pending first, then flagged, then approved
+    const orderRank = (s) => s === "Pending" ? 0 : s === "Flagged" ? 1 : 2;
+    const sorted = [...state.invoices].sort((a,b) => (orderRank(a.status) - orderRank(b.status)) || a.restaurant.localeCompare(b.restaurant));
+
+    invRows.innerHTML = sorted.map(inv => `
+      <tr>
+        <td class="mono"><button class="linkbtn" data-inv-id="${inv.id}">${inv.ref}</button></td>
+        <td>${inv.supplier}</td>
+        <td><strong>${inv.restaurant}</strong></td>
+        <td class="mono">${inv.date}</td>
+        <td class="mono right">${fmtGBP(inv.total)}</td>
+        <td><span class="chip ${chipForInvStatus(inv.status)}">${inv.status}</span></td>
+      </tr>
+    `).join("");
+
+    invRows.querySelectorAll(".linkbtn").forEach(btn => {
+      btn.addEventListener("click", () => openInvoiceDrawer(btn.getAttribute("data-inv-id")));
+    });
+  }
+
+  function renderReports(){
+    const rep = $("reportsList");
+    const topRisk = topRiskItemsAcrossLeeds();
+    const spend = spendByType();
+
+    const coverBuckets = { "<2 days":0, "2–3 days":0, "3+ days":0 };
+    for (const s of state.restaurants){
+      for (const it of s.items){
+        if (it.cover < 2) coverBuckets["<2 days"]++;
+        else if (it.cover < 3) coverBuckets["2–3 days"]++;
+        else coverBuckets["3+ days"]++;
+      }
+    }
+
+    rep.innerHTML = `
+      <div class="feed-item"><div class="t mono">—</div><div><strong>Top items at risk (across Leeds)</strong></div></div>
+      ${topRisk.map(x => `
+        <div class="feed-item">
+          <div class="t mono">${x.action > 0 ? "🔴" : x.watch > 0 ? "🟠" : "🟢"}</div>
+          <div>${x.name}: <span class="mono">${x.action}</span> action, <span class="mono">${x.watch}</span> watch</div>
+        </div>
+      `).join("")}
+      <div style="height:8px"></div>
+      <div class="feed-item"><div class="t mono">—</div><div><strong>Cover distribution (all items)</strong></div></div>
+      ${Object.entries(coverBuckets).map(([k,v]) => `
+        <div class="feed-item"><div class="t mono">•</div><div>${k}: <span class="mono">${v}</span></div></div>
+      `).join("")}
+      <div style="height:8px"></div>
+      <div class="feed-item"><div class="t mono">—</div><div><strong>Committed spend by delivery type</strong></div></div>
+      ${Object.entries(spend).map(([k,v]) => `
+        <div class="feed-item"><div class="t mono">•</div><div>${k}: <span class="mono">${fmtGBP(v)}</span></div></div>
+      `).join("")}
+      <div style="height:8px"></div>
+      <div class="feed-item"><div class="t mono">—</div><div><strong>Posted spend (approved invoices)</strong></div></div>
+      <div class="feed-item"><div class="t mono">•</div><div>Total posted: <span class="mono">${fmtGBP(state.postedTotal)}</span></div></div>
+    `;
+  }
+
+  function renderTabs(){
+    const overview = $("viewOverview");
+    const plan = $("viewPlan");
+    const invoices = $("viewInvoices");
+    const reports = $("viewReports");
+
+    $("tabOverview").classList.toggle("active", state.view==="overview");
+    $("tabPlan").classList.toggle("active", state.view==="plan");
+    $("tabInvoices").classList.toggle("active", state.view==="invoices");
+    $("tabReports").classList.toggle("active", state.view==="reports");
+
+    overview.style.display = state.view==="overview" ? "" : "none";
+    plan.style.display = state.view==="plan" ? "" : "none";
+    invoices.style.display = state.view==="invoices" ? "" : "none";
+    reports.style.display = state.view==="reports" ? "" : "none";
+
+    $("tabOverview").setAttribute("aria-selected", state.view==="overview" ? "true":"false");
+    $("tabPlan").setAttribute("aria-selected", state.view==="plan" ? "true":"false");
+    $("tabInvoices").setAttribute("aria-selected", state.view==="invoices" ? "true":"false");
+    $("tabReports").setAttribute("aria-selected", state.view==="reports" ? "true":"false");
+  }
+
+  function renderAll(){
+    renderKPIs();
+    renderSites();
+    renderDetailHeader();
+    renderTabs();
+
+    if (state.view === "overview"){
+      renderStockTable();
+      renderFeed();
+    } else if (state.view === "plan"){
+      renderPlan();
+    } else if (state.view === "invoices"){
+      renderInvoices();
+    } else {
+      renderReports();
+    }
+  }
+
+  // ---------- Replenishment Drawer ----------
+  function openBackdrop(){
+    $("drawerBackdrop").classList.add("open");
+    $("drawerBackdrop").setAttribute("aria-hidden", "false");
+  }
+  function closeBackdropIfNoneOpen(){
+    const anyOpen = $("drawer").classList.contains("open") || $("invDrawer").classList.contains("open");
+    if (!anyOpen){
+      $("drawerBackdrop").classList.remove("open");
+      $("drawerBackdrop").setAttribute("aria-hidden", "true");
+    }
+  }
+
+  function openDrawerForItem(itemIdx){
+    const site = state.restaurants[state.selectedSiteIdx];
+    const item = site.items[itemIdx];
+    state.drawer = { open:true, restaurant: site.name, item, option: null };
+
+    $("drawerRestaurant").textContent = site.name;
+    $("drawerItem").textContent = item.name;
+    $("drawerCover").textContent = item.cover >= 9.95 ? "10+" : item.cover.toFixed(1);
+    $("drawerLead").textContent = String(LEAD_STANDARD);
+    $("drawerSub").textContent = `Restaurant: ${site.name} • Item: ${item.name}`;
+
+    const options = item.options;
+    const optsEl = $("drawerOptions");
+    optsEl.innerHTML = options.map((o, idx) => `
+      <div class="opt" data-opt-idx="${idx}">
+        <div class="l">
+          <div class="title">${o.type} delivery</div>
+          <div class="meta">+${o.qty} ${item.unit} • Arrives in ${addDaysLabel(o.etaDays)} (${etaFromNow(o.etaDays)})</div>
+        </div>
+        <div class="r">
+          <div class="price mono">${fmtGBP(o.cost)}</div>
+          <div class="tag">${o.tag}</div>
+        </div>
+      </div>
+    `).join("");
+
+    optsEl.querySelectorAll(".opt").forEach(el => {
+      el.addEventListener("click", () => selectDrawerOption(Number(el.getAttribute("data-opt-idx"))));
+    });
+
+    $("drawerReason").value = "";
+    $("btnAddPlan").disabled = true;
+
+    openBackdrop();
+    $("drawer").classList.add("open");
+    $("drawer").setAttribute("aria-hidden", "false");
+  }
+
+  function closeDrawer(){
+    state.drawer.open = false;
+    $("drawer").classList.remove("open");
+    $("drawer").setAttribute("aria-hidden", "true");
+    closeBackdropIfNoneOpen();
+  }
+
+  function selectDrawerOption(optIdx){
+    const item = state.drawer.item;
+    const o = item.options[optIdx];
+    state.drawer.option = o;
+
+    $("drawerOptions").querySelectorAll(".opt").forEach((el, i) => {
+      el.style.outline = (i === optIdx) ? "2px solid rgba(17,24,39,.18)" : "none";
+      el.style.outlineOffset = (i === optIdx) ? "2px" : "0";
+    });
+
+    $("btnAddPlan").disabled = false;
+  }
+
+  function addToPlan(){
+    const opt = state.drawer.option;
+    const item = state.drawer.item;
+    const restaurant = state.drawer.restaurant;
+    if (!opt || !item || !restaurant) return;
+
+    const reason = $("drawerReason").value || "";
+
+    addPlanLine({
+      restaurant,
+      item,
+      opt,
+      reason,
+      seeded: false,
+      applyStock: true
+    });
+
+    renderAll();
+    showToast(`Expected arrival: ${etaFromNow(opt.etaDays)} • Committed: ${fmtGBP(opt.cost)}`);
+
+    closeDrawer();
+  }
+
+  // ---------- Invoice Review Drawer ----------
+  function openInvoiceDrawer(invId){
+    const inv = state.invoices.find(i => i.id === invId);
+    if (!inv) return;
+
+    state.invDrawer = { open:true, invId };
+
+    $("invRef").textContent = inv.ref;
+    $("invSupplier").textContent = inv.supplier;
+    $("invRestaurant").textContent = inv.restaurant;
+    $("invDate").textContent = inv.date;
+
+    $("invDrawerSub").textContent = `${inv.ref} • ${inv.restaurant} • ${inv.status}`;
+
+    const hint = inv.discrepancyTag
+      ? `Risk indicator present. Review for potential discrepancy (${inv.discrepancyTag}).`
+      : `No risk indicator present. Confirm values match across all three documents.`;
+    $("invHint").textContent = hint;
+
+    $("poLines").innerHTML = inv.poLines.map(l => `
+      <tr>
+        <td>${l.itemName}</td>
+        <td class="right mono">${l.qty}</td>
+        <td class="right mono">${fmtGBP(l.unitCost)}</td>
+        <td class="right mono">${fmtGBP(l.lineTotal)}</td>
+      </tr>
+    `).join("");
+
+    $("grnLines").innerHTML = inv.grnLines.map(l => `
+      <tr>
+        <td>${l.itemName}</td>
+        <td class="right mono">${l.receivedQty}</td>
+        <td class="right">${l.note}</td>
+      </tr>
+    `).join("");
+
+    $("invLines").innerHTML = inv.invLines.map(l => `
+      <tr>
+        <td>${l.itemName}</td>
+        <td class="right mono">${l.billedQty}</td>
+        <td class="right mono">${fmtGBP(l.unitCost)}</td>
+        <td class="right mono">${fmtGBP(l.lineTotal)}</td>
+      </tr>
+    `).join("");
+
+    $("invDelCharge").textContent = fmtGBP(inv.deliveryCharge);
+    $("invSub").textContent = fmtGBP(inv.subtotal);
+    $("invVat").textContent = fmtGBP(inv.vat);
+    $("invTotal").textContent = fmtGBP(inv.total);
+
+    $("invFlagReason").value = inv.flagReason || "";
+
+    const isFinal = inv.status === "Approved" || inv.status === "Flagged";
+    $("btnApproveInv").disabled = isFinal;
+    $("btnFlagInv").disabled = isFinal;
+
+    openBackdrop();
+    $("invDrawer").classList.add("open");
+    $("invDrawer").setAttribute("aria-hidden", "false");
+  }
+
+  function closeInvDrawer(){
+    state.invDrawer.open = false;
+    state.invDrawer.invId = null;
+    $("invDrawer").classList.remove("open");
+    $("invDrawer").setAttribute("aria-hidden", "true");
+    closeBackdropIfNoneOpen();
+  }
+
+  function approveInvoice(){
+    const inv = state.invoices.find(i => i.id === state.invDrawer.invId);
+    if (!inv || inv.status !== "Pending") return;
+
+    inv.status = "Approved";
+    inv.flagReason = "";
+    state.postedTotal = roundMoney(state.postedTotal + inv.total);
+
+    renderAll();
+    showToast(`${inv.ref} approved • Posted: ${fmtGBP(inv.total)}`);
+    closeInvDrawer();
+  }
+
+  function flagInvoice(){
+    const inv = state.invoices.find(i => i.id === state.invDrawer.invId);
+    if (!inv || inv.status !== "Pending") return;
+
+    const reason = $("invFlagReason").value || "";
+    inv.status = "Flagged";
+    inv.flagReason = reason;
+
+    renderAll();
+    showToast(`${inv.ref} flagged${reason ? " • " + reason : ""}`);
+    closeInvDrawer();
+  }
+
+  // ---------- Toast ----------
+  let toastTimer = null;
+  function showToast(sub){
+    const t = $("toast");
+    $("toastSub").textContent = sub;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  // ---------- Events ----------
+  function wireEvents(){
+    $("btnRefresh").addEventListener("click", () => {
+      generateAll();
+      renderAll();
+      showToast("Data refreshed");
+    });
+
+    $("tabOverview").addEventListener("click", () => { state.view="overview"; renderAll(); });
+    $("tabPlan").addEventListener("click", () => { state.view="plan"; renderAll(); });
+    $("tabInvoices").addEventListener("click", () => { state.view="invoices"; renderAll(); });
+    $("tabReports").addEventListener("click", () => { state.view="reports"; renderAll(); });
+
+    $("drawerBackdrop").addEventListener("click", () => {
+      if ($("invDrawer").classList.contains("open")) closeInvDrawer();
+      else if ($("drawer").classList.contains("open")) closeDrawer();
+    });
+
+    $("btnCloseDrawer").addEventListener("click", closeDrawer);
+    $("btnCancel").addEventListener("click", closeDrawer);
+    $("btnAddPlan").addEventListener("click", addToPlan);
+
+    $("btnCloseInvDrawer").addEventListener("click", closeInvDrawer);
+    $("btnApproveInv").addEventListener("click", approveInvoice);
+    $("btnFlagInv").addEventListener("click", flagInvoice);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape"){
+        if ($("invDrawer").classList.contains("open")) closeInvDrawer();
+        else if ($("drawer").classList.contains("open")) closeDrawer();
+      }
+    });
+  }
+
+  // ---------- Init ----------
+  wireEvents();
+  generateAll();
+  renderAll();
+})();
+</script>
+</body>
+</html>
